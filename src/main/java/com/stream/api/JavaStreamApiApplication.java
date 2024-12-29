@@ -2,8 +2,14 @@ package com.stream.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +21,7 @@ public class JavaStreamApiApplication {
 	
 
 	public static void main(String[] args) {
-		List<Employe> list = Arrays.asList(new Employe("emp1","emp1",26),new Employe("emp2","emp2",25),new Employe("emp2","emp2",24));
+		List<Employe> list = Arrays.asList(new Employe("emp3","emp3",27),new Employe("emp1","emp1",26),new Employe("emp2","emp2",25),new Employe("emp2","emp2",24));
 		filterEmployeWithAge(list);
 		SpringApplication.run(JavaStreamApiApplication.class, args);
 	}
@@ -44,6 +50,8 @@ public class JavaStreamApiApplication {
 		List<Employe> sortedEmployes = list.stream().sorted((emp1,emp2)->{
 			return emp1.getAge() - emp2.getAge();
 		}).collect(Collectors.toList());
+		
+		List<Employe> sortedEmployes2= list.stream().sorted(Comparator.comparing(Employe::getAge).reversed()).toList();
 	}
 	
 	public static void mapEemploye(List<Employe> list) {
@@ -77,7 +85,7 @@ public class JavaStreamApiApplication {
 		emps.stream().max((emp1,emp2)->{
 			return emp1.getAge() - emp2.getAge();
 		});
-		
+				
 		//min
 		
 		emps.stream().min((emp1,emp2)->{
@@ -88,6 +96,63 @@ public class JavaStreamApiApplication {
 	public static void loopEmployes(List<Employe> emps) {
 		emps.stream().forEach(emp->System.out.println("employe : "+emp));
 	}
+	
+	
+	public static void groupByEmploye(List<Employe> list) {
+		Map<String,List<Employe>> map = list.stream().collect(
+				Collectors.groupingBy(Employe::getFirstName)
+				);
+		
+		map.forEach((key,value)->{
+			System.out.println("map key :"+key);
+			System.out.println("map value :"+value);
+
+		});
+	}
+		
+		public static void removeFromEmployes(List<Employe> emps) {
+			emps.removeIf(emp->emp.getAge() < 25);
+			List<Employe> emps2 = Arrays.asList(new Employe("emp3","emp3",27));
+			emps.removeAll(emps2);
+			emps.clear();
+		}
+		
+		public static void dropWhile(List<Employe> emps) {
+			emps.stream().dropWhile(emp->emp.getAge() <25).collect(Collectors.toList());
+		}
+		
+		public static void takewhile(List<Employe> emps) {
+			emps.stream().takeWhile(emp->emp.getAge() > 25).toList();
+		}
+		
+		public static void peekEmployes(List<Employe> emps) {
+			Stream.of(1,2,3,4,5,6,7,8,9).filter(num->num > 5).peek(e->System.out.println(e));
+
+		}
+		
+		public static void flatMapEmployes() {
+			List<List<Integer>> listOfLists = Arrays.asList(
+					  Arrays.asList(1, 2, 3),
+					  Arrays.asList(4, 5),
+					  Arrays.asList(6, 7, 8)
+					);
+			
+			List<Integer> listInt =	listOfLists.stream().flatMap(list->list.stream().filter(num->num > 5)).toList();
+		}
+		
+	
+	public static void partionningEmployes(List<Employe> emps) {
+		
+		Map<Boolean, List<Employe>> map = emps.stream().collect(Collectors.partitioningBy(
+				emp->emp.getAge() > 25
+				));
+		
+	}
+		
+		
+		
+		
+	
 	
 	
 	
